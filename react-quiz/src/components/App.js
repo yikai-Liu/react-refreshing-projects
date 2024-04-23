@@ -5,6 +5,7 @@ import Error from "./Error";
 import Question from "./Question";
 import { useEffect, useReducer } from "react";
 import StartScreen from "./StartScreen";
+import NextButton from "./NextButton";
 
 const initialState = {
   questions: [],
@@ -23,6 +24,8 @@ function reducer(state, action) {
       return { ...state, status: "error" };
     case "start":
       return { ...state, status: "active" };
+    case "nextQuestion":
+      return { ...state, index: state.index + 1, answer: null };
     case "newAnswer":
       const question = state.questions.at(state.index);
       return {
@@ -33,6 +36,7 @@ function reducer(state, action) {
             ? state.points + question.points
             : state.points,
       };
+
     default:
       throw new Error("Not allowed action type");
   }
@@ -62,11 +66,14 @@ export default function App() {
           <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
         )}
         {status === "active" && (
-          <Question
-            question={questions[index]}
-            dispatch={dispatch}
-            answer={answer}
-          />
+          <>
+            <Question
+              question={questions[index]}
+              dispatch={dispatch}
+              answer={answer}
+            />
+            <NextButton dispatch={dispatch} answer={answer} />
+          </>
         )}
       </Main>
     </div>
